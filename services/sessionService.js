@@ -25,6 +25,14 @@ exports.list = async () => {
 
 exports.createSession = async (session) => {
 	try {
+		if(session.type.startsWith("SQL")){
+			session.test_code={
+				starter: 7700,
+				template:"",
+				unit_test:""
+
+			}
+		}
 		session.round = 0
 		session = await Session.create(session)
 		Instructor.update(

@@ -6,7 +6,8 @@ const group = require("../models/group");
 const User = initModels(sequelize).user;
 const Code = initModels(sequelize).code;
 const Group = initModels(sequelize).group;
-
+var CryptoJS = require("crypto-js");
+var iv  = CryptoJS.enc.Utf8.parse('1583288699248111');
 const { getGroupById } = require("./groupService")
 
 exports.list = async () => {
@@ -124,12 +125,40 @@ exports.getUsersByGroup = async (groupId) => {
 
 exports.getUserByEmail = async (email) => {
 	console.log(email)
+	const encryptEmail = CryptoJS.AES.encrypt(email, process.env.JWT_SECRET).toString();
 	try {
 		let user = await User.findOne({
 			where:{
-				email: email,
+				email: encryptEmail,
 			}
 		})
+		return user
+	} catch (err) {
+		console.error("Error retrieving users by group:", err);
+	}
+};
+
+
+exports.decryptUserEmail = async (id) => {
+	try {
+		let user = await getUserById(id)
+		const decrypted = CryptoJS.AES.decrypt(user.email, process.env.JWT_SECRET);
+		if (decrypted) {
+			try {
+				console.log(decrypted);
+				const str = decrypted.toString(CryptoJS.enc.Utf8);
+				console.log(str)
+				if (str.length > 0) {
+					user.email = str
+					return user;
+				} else {
+					return 'error 1';
+				} 
+			} catch (e) {
+				return 'error 2';
+			}
+		}
+		return 'error 3';
 		return user
 	} catch (err) {
 		console.error("Error retrieving users by group:", err);

@@ -21,6 +21,18 @@ exports.getUserById = async (req, res, next) => {
   }
 }
 
+exports.decryptUserEmail = async (req, res, next) => {
+  try {
+    const user = await userService.decryptUserEmail(req.params.id)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+    res.status(200).json(user)
+  } catch (error) {
+    next(error)
+  }
+}
+
 exports.getUsersByIds = async (req, res, next) => {
   try {
     const users = await userService.getUsersByIds(req.body.ids)

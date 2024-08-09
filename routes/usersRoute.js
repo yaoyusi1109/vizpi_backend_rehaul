@@ -60,6 +60,25 @@ router.get('/:id', (req, res, next) => {
 })
 
 /**
+ * /users/decrypt/{id}:
+ *   get:
+ *     summary: Get a user by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: User details
+ */
+router.get('/decrypt/:id', (req, res, next) => {
+  return UserController.decryptUserEmail(req, res, next)
+})
+
+/**
  * @openapi
  * /users/{id}:
  *   put:

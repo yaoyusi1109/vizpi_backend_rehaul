@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy
 const initModels = require("../models/init-models")
 const sequelize = require('../postgre/db')
 const Instructor = initModels(sequelize).instructor
+const User = initModels(sequelize).user;
 const authService = require('../services/authService')
 
 passport.use(new LocalStrategy(
@@ -24,13 +25,20 @@ passport.use(new LocalStrategy(
 ))
 
 passport.serializeUser((instructor, done) => {
-  done(null, instructor.id)
+  console.log(instructor)
+  done(null, {id: instructor.id ,type: instructor.role==1?"instructor":"student"})
 })
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const instructor = await Instructor.findByPk(id)
-    done(null, instructor)
+    if(id.type== "instructor"){
+      const instructor = await Instructor.findByPk(id)
+      done(null, instructor)
+    }
+    else{
+      const student = await User.findByPk(id)
+      done(null, student)
+    }
   } catch (error) {
     done(error)
   }

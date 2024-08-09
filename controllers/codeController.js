@@ -101,3 +101,24 @@ exports.getCodesBySessionId = async (req, res, next) => {
     res.status(500).json({ message: error.message })
   }
 }
+
+exports.runCode = async (req, res, next) => {
+  try {
+    const code = await codeService.runCode(req.body.code1,req.body.code2,req.body.type,req.params.id)
+    console.log(code)
+    res.json({ code: code })
+  } catch (error) {
+    console.log(error)
+    res.status(200).json({ message: error})
+  }
+}
+exports.getSchema = async (req, res, next) => {
+  try {
+    const code = await codeService.getSchema(req.params.id)
+    console.log(code)
+    res.json({ code: code })
+  } catch (error) {
+    console.log(error)
+    res.status(200).json({ message: error})
+  }
+}

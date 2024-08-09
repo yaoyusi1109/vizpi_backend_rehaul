@@ -38,4 +38,11 @@ router.get('/session/:id/:stuId', (req, res, next) => {
   return CodeController.getCodeByUserInSession(req, res, next)
 })
 
+router.post('/run/:id', (req, res, next) => {
+  return CodeController.runCode(req, res, next)
+})
+router.get('/schema/:id', (req, res, next) => {
+  return CodeController.getSchema(req, res, next)
+})
+
 module.exports = router

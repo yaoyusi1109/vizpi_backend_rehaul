@@ -77,7 +77,7 @@ exports.getGroupByUser = async (userId, sessionId) => {
 	}
 }
 
-exports.getGroupsByUser = async (userId) => {
+exports.getGroupsByUser = async (userId, sessionId) => {
 	try {
 		let group = await Group.findAll({
 			where: {
@@ -87,24 +87,25 @@ exports.getGroupsByUser = async (userId) => {
 				session_id: sessionId,
 			},
 		})
-
+		console.log(group)
 		if (!group) {
 			throw new Error("Group not found")
 		} else {
-			group = group.dataValues
+			//group = group.dataValues
 		}
-		const sessionId = group.session_id
-		const messages = await Message.findAll({
-			where: {
-				[Op.and]: [
-					{ session_id: sessionId },
-					{ [Op.or]: [{ recipient_id: userId }, { recipient_id: null }, { recipient_id: -1 }] },
-					{ [Op.or]: [{ group_id: group.id }, { group_id: null }, { group_id: -1 }] },
-				],
-			},
-			order: [["created_time", "ASC"]],
-		})
-		group.messages = messages
+		for(let i = 0; i < group.length; i++){
+			let messages = await Message.findAll({
+				where: {
+					[Op.and]: [
+						{ session_id: sessionId },
+						{ [Op.or]: [{ recipient_id: userId }, { recipient_id: null }, { recipient_id: -1 }] },
+						{ [Op.or]: [{ group_id: group[i].id }, { group_id: null }, { group_id: -1 }] },
+					],
+				},
+				order: [["created_time", "ASC"]],
+			})
+			group[i].messages = messages
+		}
 		return group
 	} catch (err) {
 		console.error(err)

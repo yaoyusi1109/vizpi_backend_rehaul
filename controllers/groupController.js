@@ -40,7 +40,7 @@ exports.getGroupsByUser = async (req, res, next) => {
 		if (isNaN(userId)) {
 			return res.status(400).json({ message: "Invalid user ID" })
 		}
-		const group = await groupService.getGroupsByUser(req.params.userId)
+		const group = await groupService.getGroupsByUser(req.params.userId,req.params.sessionId)
 		res.status(200).json({ group })
 	} catch (error) {
 		res.status(500).json({ message: error.message })
